@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "mcore"
+version = "0.1.0"
+description = "Maic's Core library"
+authors = ["Maic Siemering <maic@siemering.tech>"]
+
+[tool.poetry.dependencies]
+python = "^3.8.1"
+
+[tool.poetry.extras]
+secure_net = ["cryptography"]
+arcade = ["arcade", "esper"]
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+retro = "retro.__main__:main"

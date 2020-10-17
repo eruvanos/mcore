@@ -1,0 +1,34 @@
+[tool.poetry]
+name = "m-core"
+version = "0.1.0"
+description = "Supportive code for logging, testing, network, and arcade game development."
+authors = ["Maic Siemering <maic@siemering.tech>"]
+
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+license = "MIT"
+readme = "README.md"
+repository="https://github.com/eruvanos/mcore"
+
+[tool.poetry.dependencies]
+python = "^3.8.1"
+
+[tool.poetry.extras]
+secnet = ["cryptography"]
+game = ["arcade", "esper"]
+test = ["requests", "flask", "mirakuru"]
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
