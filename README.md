@@ -6,7 +6,11 @@ Supportive code for logging, testing, network, and arcade game development.
 ## Installation
 
 ```
-pip install git+https://github.com/eruvanos/mcore.git
+pip install git+https://github.com/eruvanos/mcore.git#main
+
+or
+
+pip install git+https://github.com/eruvanos/mcore.git#main[<extras>]
 ```
 
 ## Overview
