@@ -34,6 +34,7 @@ pip install git+https://github.com/eruvanos/mcore.git#main[<extras>]
 * `mcore.net.AIONetwork` - Like `Network` with async interface
 
 ### Test
+> requires `mcore[test]`
 
 * `mcore.test.local_dynamodb` - Manage local dynamodb within test setups
 * `mcore.test.mock_server` - Mock json API with Flask in test setups
