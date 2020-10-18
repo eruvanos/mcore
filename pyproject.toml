@@ -20,7 +20,7 @@ readme = "README.md"
 repository="https://github.com/eruvanos/mcore"
 
 [tool.poetry.dependencies]
-python = "^3.8.1"
+python = ">=3.7.0"
 arcade = {version = "^2.4.3", optional = true}
 esper = {version = "^1.3", optional = true}
 Flask = {version = "^1.1.2", optional = true}
