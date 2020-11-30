@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mcore"
-version = "0.1.0"
+version = "0.1.1"
 description = "Supportive code for logging, testing, network, and arcade game development."
 authors = ["Maic Siemering <maic@siemering.tech>"]
 
