@@ -12,10 +12,19 @@ def with_env(**kwargs):
     
     print(os.get_env("test")) # -> None
     """
+    origin_env = dict(environ)
+
     for key, value in kwargs.items():
-        environ[key] = value
+        if value:
+            environ[key] = value
+        else:
+            del environ[key]
 
     yield environ
 
     for key in kwargs.keys():
-        del environ[key]
+        value = origin_env.get(key)
+        if value:
+            environ[key] = value
+        else:
+            del environ[key]
