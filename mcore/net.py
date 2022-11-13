@@ -1,9 +1,11 @@
+import asyncio
 import json
 import logging
 import socket
 from asyncio import StreamReader, StreamWriter
 from json import JSONDecodeError
-from typing import Any, Optional
+from threading import Lock
+from typing import Any, Optional, Literal
 
 from mcore.serialize import EnhancedJSONEncoder
 
@@ -34,22 +36,25 @@ class Packet(dict):
 
 class Network:
     BUFFER = 2
-    ORDER = 'big'
+    ORDER: Literal["little", "big"] = 'big'
 
     def __init__(self, socket: socket.socket):
         self.socket = socket
+        self._lock = Lock()
 
     def _recv(self) -> str:
-        raw_length = self.socket.recv(self.BUFFER)
-        length = int.from_bytes(raw_length, self.ORDER, signed=False)
-        data = self.socket.recv(length)
-        return data.decode()
+        with self._lock:
+            raw_length = self.socket.recv(self.BUFFER)
+            length = int.from_bytes(raw_length, self.ORDER, signed=False)
+            data = self.socket.recv(length)
+            return data.decode()
 
     def _send(self, msg: str):
-        data = msg.encode()
-        length = int.to_bytes(len(data), self.BUFFER, self.ORDER, signed=False)
-        self.socket.sendall(length)
-        self.socket.sendall(data)
+        with self._lock:
+            data = msg.encode()
+            length = int.to_bytes(len(data), self.BUFFER, self.ORDER, signed=False)
+            self.socket.sendall(length)
+            self.socket.sendall(data)
 
     def recv_json(self) -> Optional[dict]:
         data = self._recv()
@@ -58,7 +63,7 @@ class Network:
 
         try:
             return json.loads(data)
-        except JSONDecodeError as e:
+        except JSONDecodeError:
             logger.exception(f'Could not parse data: {data}')
             return None
 
@@ -120,24 +125,27 @@ class SecureNetwork(Network):
 
 class AIONetwork:
     BUFFER = 2
-    ORDER = 'big'
+    ORDER: Literal["little", "big"] = 'big'
 
     def __init__(self, reader: StreamReader, writer: StreamWriter):
         self.reader: StreamReader = reader
         self.writer: StreamWriter = writer
+        self._lock = asyncio.Lock()
 
     async def _recv(self) -> str:
-        raw_length = await self.reader.read(self.BUFFER)
-        length = int.from_bytes(raw_length, self.ORDER, signed=False)
-        data = await self.reader.read(length)
-        return data.decode()
+        with self._lock:
+            raw_length = await self.reader.read(self.BUFFER)
+            length = int.from_bytes(raw_length, self.ORDER, signed=False)
+            data = await self.reader.read(length)
+            return data.decode()
 
     async def _send(self, msg: str):
-        data = msg.encode()
-        length = int.to_bytes(len(data), self.BUFFER, self.ORDER, signed=False)
-        self.writer.write(length)
-        self.writer.write(data)
-        await self.writer.drain()
+        with self._lock:
+            data = msg.encode()
+            length = len(data).to_bytes(self.BUFFER, self.ORDER, signed=False)
+            self.writer.write(length)
+            self.writer.write(data)
+            await self.writer.drain()
 
     async def _recv_json(self) -> Optional[dict]:
         data = await self._recv()
